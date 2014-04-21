@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd" >
+	
+	<description>
+		This configuration file has ConnectionPool and all dao implementations 
+	</description>
+	
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+       	<property name="location">
+       	    <value>db_postgresql.properties</value>
+       	</property>
+    </bean>
+    
+    <bean id="twitterPool" class="com.sarzhinskiy.twitter.jbdc.TwitterConnectionPool" init-method="init" destroy-method="close"
+    	c:poolSize="${jdbc.pool_size}" 
+    	c:dbDriver="${jdbc.driver}"
+    	c:connectionUrl="${jdbc.url}"
+    	c:dbUser="${jdbc.user}"
+    	c:dbPassword="${jdbc.password}" >       	
+    </bean>
+    
+    <bean id="newsDAO" class="com.sarzhinskiy.twitter.dao.postgresql.news.NewsDAOPostgreSQL">
+        <constructor-arg ref="twitterPool" />
+    </bean>
+    
+    <bean id="twitDAO" class="com.sarzhinskiy.twitter.dao.postgresql.twit.TwitDAOPostgreSQL" >
+        <constructor-arg ref="twitterPool" />
+    </bean>
+    
+    <bean id="userDAO" class="com.sarzhinskiy.twitter.dao.postgresql.user.UserDAOPostgreSQL" >
+        <constructor-arg ref="twitterPool" />
+    </bean>
+    
+    <bean id="cityDAO" class="com.sarzhinskiy.twitter.dao.postgresql.city.CityDAOPostgreSQL" >
+        <constructor-arg ref="twitterPool" />
+    </bean>
+    
+   <bean id="countryDAO" class="com.sarzhinskiy.twitter.dao.postgresql.country.CountryDAOPostgreSQL" >
+        <constructor-arg ref="twitterPool" />
+    </bean>
+
+   	<bean id="daoFactory" class="com.sarzhinskiy.twitter.dao.DAOFactory" >
+   	    <lookup-method name="getUserDAO" bean="userDAO"/>
+   	    <lookup-method name="getTwitDAO" bean="twitDAO"/>
+   	    <lookup-method name="getNewsDAO" bean="newsDAO"/>
+   	    <lookup-method name="getCountryDAO" bean="countryDAO"/>
+   	    <lookup-method name="getCityDAO" bean="cityDAO"/>
+   	</bean>
+   	
+</beans>

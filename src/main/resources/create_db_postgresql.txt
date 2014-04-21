@@ -1,0 +1,102 @@
+CREATE TABLE country(
+	id  SERIAL,
+	name text NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE (name)
+);
+
+CREATE TABLE  city(
+	id SERIAL,
+	name VARCHAR(40) NOT NULL,
+	country_id integer NOT NULL,
+	status integer,
+	PRIMARY KEY (id),
+	FOREIGN KEY (country_id) REFERENCES country(id)
+);
+
+CREATE TABLE  news(
+	id SERIAL,
+	text text,
+	timestamp Timestamp,
+	like_number integer,
+	status integer,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE  news_image(
+	id SERIAL,
+	name text,
+	news_id integer,
+	image bytea,
+	comment text,
+	PRIMARY KEY (id),
+	FOREIGN KEY (news_id) REFERENCES news(id)
+);
+
+CREATE TABLE role(
+	id SERIAL,
+	name text,
+	PRIMARY KEY (id),
+	UNIQUE (id)
+);
+
+CREATE TABLE "user"(
+	id SERIAL, 
+	email VARCHAR(50) NOT NULL,
+	password_cipher text NOT NULL, 
+	surname VARCHAR(40),
+	name VARCHAR(40),
+	role_id INT,
+	is_blocked BOOL,
+	PRIMARY KEY (id), 
+	UNIQUE (email),
+	FOREIGN KEY (role_id) REFERENCES role(id)
+);
+
+CREATE TABLE user_additional_info(
+	user_id INT,
+	gender BOOL,
+	birthday DATE,
+	country_id INT,
+	city_id INT,
+	address VARCHAR(60),
+	phone VARCHAR(20),
+	status INT,
+	about_yourself VARCHAR(500),
+	FOREIGN KEY (user_id) REFERENCES "user"(id),
+	FOREIGN KEY (country_id) REFERENCES country(id),
+	FOREIGN KEY (city_id) REFERENCES city(id)
+);
+
+CREATE TABLE user_observer(
+	id SERIAL,
+	user_observer_id INT,
+	user_observed_id INT,
+	PRIMARY KEY (id),
+	FOREIGN KEY (user_observer_id) REFERENCES "user"(id),
+	FOREIGN KEY (user_observed_id) REFERENCES "user"(id)
+);
+
+CREATE TABLE user_image(
+	id SERIAL,
+	name text,
+	user_id INT,
+	image bytea,
+	status INT,
+	comment text,
+	album_name text,
+	PRIMARY KEY (id),
+	FOREIGN KEY (user_id) REFERENCES "user"(id)
+);
+
+CREATE TABLE twit(
+	id SERIAL,
+	owner_id INT NOT NULL,
+	text VARCHAR(500),
+	timestamp Timestamp,
+	like_number INT,
+	status INT,
+	image bytea,
+	PRIMARY KEY (id),
+	FOREIGN KEY (owner_id) REFERENCES "user"(id)
+);

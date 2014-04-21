@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd" >
+
+    
+    <jdbc:embedded-database id="dataSource" type="HSQL">
+        <jdbc:script location="classpath:schema.sql"/>
+    </jdbc:embedded-database>
+    
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+    
+    <bean id="twitterPoolTest" class="com.sarzhinskiy.twitter.ConnectionPoolTest" >
+        <constructor-arg ref="dataSource"/>
+    </bean>	
+    
+    <bean id="countryDAO" class="com.sarzhinskiy.twitter.dao.postgresql.country.CountryDAOPostgreSQL" >
+    	<constructor-arg ref="twitterPoolTest" />
+    </bean>
+    
+    <bean id="cityDAO" class="com.sarzhinskiy.twitter.dao.postgresql.city.CityDAOPostgreSQL" >
+        <constructor-arg ref="twitterPoolTest" />
+   	</bean>
+    
+    <bean id="newsDAO" class="com.sarzhinskiy.twitter.dao.postgresql.news.NewsDAOPostgreSQL" >
+        <constructor-arg ref="twitterPoolTest" />
+   	</bean>
+   	
+   	<bean id="twitDAO" class="com.sarzhinskiy.twitter.dao.postgresql.twit.TwitDAOPostgreSQL" >
+   		<constructor-arg ref="twitterPoolTest" />
+   	</bean>
+   	
+   	<bean id="userDAO" class="com.sarzhinskiy.twitter.dao.UserDAOHSQL" >
+   		<constructor-arg ref="twitterPoolTest" />
+   	</bean>
+    
+</beans>
